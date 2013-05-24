@@ -83,7 +83,9 @@ jQuery(function() {
     MsgView.prototype.moderate = function() {
       $('#editable').attr("contenteditable", true);
       $('.validate').show();
-      return $('.cancel').show();
+      $('.cancel').show();
+      this.oldMsg = $('#editable').text();
+      return $('#editable').addClass("editable");
     };
 
     MsgView.prototype.validate = function() {
@@ -93,15 +95,18 @@ jQuery(function() {
       });
       $('#editable').attr("contenteditable", false);
       $('.validate').hide();
-      return $('.cancel').hide();
+      $('.cancel').hide();
+      return $('#editable').removeClass("editable");
     };
 
     MsgView.prototype.cancel = function() {
       $('#editable').attr("contenteditable", false);
+      console.log("old : " + this.oldMsg);
       $('#editable').text(this.oldMsg);
       $('.validate').hide();
       $('.cancel').hide();
-      return this.oldMsg = "";
+      this.oldMsg = "";
+      return $('#editable').removeClass("editable");
     };
 
     MsgView.prototype.remove = function() {
@@ -132,7 +137,7 @@ jQuery(function() {
     };
 
     BlogView.prototype.render = function() {
-      $(this.el).append("Nickname: <input type='text' id='nick' /> <br />Message: <input type='text' id='msg' /><br /><button id='submit'>Envoyer</button><br />");
+      $(this.el).append("<label for='nick'>Nickname : </label><input type='text' id='nick' /> <br /><label for='msg'>Message : </label><textarea rows='3' id='msg'></textarea><br /><button id='submit'>Envoyer</button><br />");
       return $(this.el).append("<ul></ul>");
     };
 

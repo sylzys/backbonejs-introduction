@@ -20,7 +20,7 @@ jQuery ->
 		tagName: 'li'
 
 		initialize: ->
-			_.bindAll @ #, render, unrender, moderate, remove
+			_.bindAll @
 			@model.bind('change', @render);
 			@model.bind('remove', @unrender);
 			@oldMsg = ''
@@ -38,7 +38,7 @@ jQuery ->
 			$(@el).append('<span id="editable">'+ @model.get('msg')+ "</span>")
 			if @model.get("modified")
 				$(@el).append("<br />moderated on "+@model.get('modified'))
-			return @
+			@
 
 		unrender: ->
 			$(@el).remove
@@ -47,19 +47,24 @@ jQuery ->
 			$('#editable').attr("contenteditable", true)
 			$('.validate').show()
 			$('.cancel').show()
+			@oldMsg = $('#editable').text();
+			$('#editable').addClass("editable")
 
 		validate: ->
 			@model.set({modified: getDate(), msg: $('#editable').text()})
 			$('#editable').attr("contenteditable", false)
 			$('.validate').hide()
 			$('.cancel').hide()
+			$('#editable').removeClass("editable")
 
 		cancel: ->
 			$('#editable').attr("contenteditable", false)
+			console.log "old : "+@oldMsg
 			$('#editable').text(@oldMsg)
 			$('.validate').hide()
 			$('.cancel').hide()
 			@oldMsg = ""
+			$('#editable').removeClass("editable")
 
 		remove: ->
 			@model.destroy()
@@ -74,7 +79,7 @@ jQuery ->
 			@render()
 
 		render: ->
-			$(@el).append("Nickname: <input type='text' id='nick' /> <br />Message: <input type='text' id='msg' /><br /><button id='submit'>Envoyer</button><br />")
+			$(@el).append("<label for='nick'>Nickname : </label><input type='text' id='nick' /> <br /><label for='msg'>Message : </label><textarea rows='3' id='msg'></textarea><br /><button id='submit'>Envoyer</button><br />")
 			$(@el).append("<ul></ul>")
 
 		addMsg: ->

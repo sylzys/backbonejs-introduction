@@ -1,0 +1,12 @@
+.delete, .cancel {
+	margin: 0px 10px 0px 10px;
+}
+
+.editable {
+	border: 2px dashed blue;
+	padding: 3px;
+}
+
+li {
+	margin-top:10px;
+}
