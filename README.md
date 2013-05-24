@@ -9,4 +9,4 @@ In this application, we can see model, collection, view and events.
 
 **TODO**
 
-- [] adding the router fonctionnality
+- [] adding the router fonctionnality to manage multiple messages
