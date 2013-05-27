@@ -7,6 +7,11 @@ It introduces Backbone.js architecture and main features, with a simple moderabl
 
 In this application, we can see model, collection, view and events.
 
+**TAGS**
+
+- no_templates: messages are rendered by appending html code directly within the view
+- templating: messages are rendered bye an underscore.js template
+
 **TODO**
 
 - [] adding the router fonctionnality to manage multiple messages
