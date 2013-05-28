@@ -10,51 +10,29 @@
 </head>
 <body>
 
-	<div id="form" class="span6">
+	<div id="form" style="width=570px; margin-left:10px;">
 		<label for='nick'>Nickname : </label><input type='text' id='nick' /> <br /><label for='msg'>Message : </label><textarea rows='3' id='msg'></textarea><br /><button id='submit'>Envoyer</button><br />
 	</div>
-	<script type="text/template" id="item-template">
-		<ul>
-			<% _.each(messages, function(msg) { %>
-				<li><%= msg.author %> (<%= msg.created %>) :
-					<a class="btn btn-small btn-info moderate" href="#"><i class="icon-pencil"></i> Moderate</a>
-					<a class="btn btn-small btn-danger delete" ><i class="icon-trash"></i> Delete</a>
-					<a class="btn btn-small validate" href="#" style="display:none;"><i class="icon-check" style="color:green;"></i> Valider</a>
-					<a class="btn btn-small cancel" href="#" style="display:none;"><i class="icon-check" style="color:red;"></i> Annuler</a><br />
-					<span id="editable"><%= msg.msg %></span>
-				</li>
-				<% }); %>
-		</ul>
-
-
+	<div id="viewmsg" style="float:right;"></div>
+	<script type="text/template" id="msglist-template">
+		<% _.each(messages, function(msg) { %>
+			<li><a href="#view/<%= msg.id %>">By <%= msg.author %> (<%= msg.created %>)</a></li>
+			<% }); %>
 	</script>
+
 	<div id="msglist"></div>
+	<script type="text/template" id="msg-template">
+		By <%= author %> (<%= created %>) :
+		<a class="btn btn-small btn-info moderate" href="#"><i class="icon-pencil"></i> Moderate</a>
+		<a class="btn btn-small btn-danger delete" ><i class="icon-trash"></i> Delete</a>
+		<a class="btn btn-small validate" href="#" style="display:none;"><i class="icon-check" style="color:green;"></i> Valider</a>
+		<a class="btn btn-small cancel" href="#" style="display:none;"><i class="icon-check" style="color:red;"></i> Annuler</a><br />
+		<span id="editable"><%= msg %></span>
+	</script>
+
 	<script src="js/jquery.min.js"></script>
 	<script type="text/javascript" src="js/underscore-min.js"></script>
 	<script type="text/javascript" src="js/backbone-min.js"></script>
 	<script type="text/javascript" src="js/script_JS.js"></script>
-	<h1></h1>
-	<p>
-	</p>
 </body>
 </html>
-
-<!-- <!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>CoffeeScript, Meet Backbone.js: Part N</title>
-  <link rel="stylesheet" href="/coffeescript-meet-backbonejs/style.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
-  <script src="http://ajax.cdnjs.com/ajax/libs/json2/20110223/json2.js"></script>
-  <script src="http://ajax.cdnjs.com/ajax/libs/underscore.js/1.1.6/underscore-min.js"></script>
-  <script src="http://ajax.cdnjs.com/ajax/libs/backbone.js/0.3.3/backbone-min.js"></script>
-  <script src="js/script.js"></script>
-</head>
-<body>
-  <header>
-    <h1>CoffeeScript, Meet Backbone.js: Part N</h1>
-    <p>Looking for <a href="docs/script.html">the documentation</a>?</p>
-  </header>
-</body>
-</html> -->
