@@ -29,7 +29,7 @@
  });
 
  var MsgView = Backbone.View.extend({
-	el : $('#msglist'),
+	el : $('#viewmsg'),
 	events: {
 		'click a.moderate': 'moderate',
 		'click a.delete': 'remove',
@@ -37,50 +37,65 @@
 		'click a.cancel': 'cancel'
 	},
 	initialize: function(){
-		this.template = _.template($('#item-template').html());
-
+		this.template = _.template($('#msg-template').html());
 		/*--- binding ---*/
-		this.collection = msglst;
 		this.oldMsg = "";
-		_.bindAll(this, 'render');
-		this.collection.bind('change', this.render);
-		this.collection.bind('add', this.render);
-		this.collection.bind('remove', this.render);
+		this.model = this.collection.at(this.id);
+		this.render();
 	},
 	render: function(){
-		var renderedContent = this.template({ messages : this.collection.toJSON() });
-		$(this.el).html(renderedContent);
+		var renderedContent = this.template(this.model.toJSON());
+		$('#viewmsg').html(renderedContent);
 		return this;
 	},
 	unrender: function(){
 		$(this.el).remove();
 	},
 	moderate: function(){
-		console.log($('#editable').attr("contenteditable"));
-		console.log("moderating");
 		this.oldMsg = $('#editable').text();
 		$('#editable').attr("contenteditable", true);
-		console.log($('#editable').attr("contenteditable"));
+		$('#editable').addClass("editable");
 		$('.validate').show();
 		$('.cancel').show();
 	},
 	validate: function(){
-		console.log("moderated post + " + $('#msg').html());
 		this.model.set({modified: getDate(), msg: $('#editable').text()});
 		$('#editable').attr("contenteditable", false);
 		$('.validate').hide();
 		$('.cancel').hide();
+		$('#editable').removeClass("editable");
 	},
 	cancel: function(){
 		$('#editable').attr("contenteditable", false);
 		$('#editable').text(this.oldMsg);
 		$('.validate').hide();
 		$('.cancel').hide();
+		$('#editable').removeClass("editable");
 	},
 	remove: function(){
 		this.model.destroy();
 	}
  });
+
+ var MsgListView = Backbone.View.extend({
+	el : $('#msglist'),
+	initialize: function(){
+		this.template = _.template($('#msglist-template').html());
+		/*--- binding ---*/
+		_.bindAll(this, 'render');
+		this.collection = msglst;
+		this.collection.bind('change', this.render);
+		this.collection.bind('add', this.render);
+		this.collection.bind('remove', this.render);
+	},
+	render: function(){
+		var self = this;
+		var renderedContent = this.template({ messages : this.collection.toJSON() });
+		$(this.el).html(renderedContent);
+		return this;
+	}
+
+});
 
  var BlogView = Backbone.View.extend({
 	el: $('#form'),
@@ -98,11 +113,29 @@
 		$('#nick').val('');
 	},
 	appendMsg: function(msg){
-		var msgView = new MsgView({
+		var msgListView = new MsgListView({
 			model: msg
 		});
-		$('ul', this.el).append(msgView.render().el);
+		$('ul', this.el).append(msgListView.render().el);
 	}
 });
+
+ var BlogRouter = Backbone.Router.extend({
+	initialize: function(){
+		this.msglst = msglst;
+		this.blogview = new BlogView();
+		this.route("view/:id", "showMsg");
+	},
+	showMsg: function(id){
+		var self = this;
+		var msgview = new MsgView({
+			collection: self.msglst,
+			id : id
+		});
+	}
+ });
+
  var msglst = new msgList();
- var blogview = new BlogView();
+ var router = new BlogRouter();
+ Backbone.history.start();
+
