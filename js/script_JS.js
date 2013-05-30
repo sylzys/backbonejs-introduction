@@ -1,29 +1,29 @@
  Backbone.sync = function(method, model, success, error){
-	success();
+	success = function(){};
  };
- function getDate(){
-	var d = new Date();
-	var month = d.getUTCMonth();
-	var day = d.getUTCDate();
-	var year = d.getUTCFullYear();
-	var hour = d.getHours();
-	var minute = d.getMinutes();
-	var second = d.getSeconds();
-	return (day + "/"+month+"/"+year+" at "+hour+ ":" + minute + ":" + second);
- }
+ // function getDate(){
+	// var d = new Date();
+	// var month = d.getUTCMonth();
+	// var day = d.getUTCDate();
+	// var year = d.getUTCFullYear();
+	// var hour = d.getHours();
+	// var minute = d.getMinutes();
+	// var second = d.getSeconds();
+	// return (day + "/"+month+"/"+year+" at "+hour+ ":" + minute + ":" + second);
+ // }
+function getDate() {
+var d = new Date();
+options = {year: "numeric", month: "numeric", day: "numeric",
+hour: "numeric", minute: "numeric", second: "numeric",
+hour12: false};
+return(d.toLocaleString("en-GB", options));
+}
  var Message = Backbone.Model.extend({
 	defaults: {
 		created: getDate()
-	},
-	validate: function(attrs){
-		if (!attrs.author) {
-			return ("Please specify an author");
-		}
-		if (!attrs.msg) {
-			return ("Please specify a message");
-		}
 	}
  });
+
  var msgList = Backbone.Collection.extend({
 	model: Message
  });
@@ -103,7 +103,7 @@
 		"click button#submit": "addMsg"
 	},
 	initialize: function(){
-		this.collection = msglst;
+		//this.collection = msglst;
 		this.collection.bind('add', this.appendMsg);
 	},
 	addMsg: function(){
@@ -122,8 +122,10 @@
 
  var BlogRouter = Backbone.Router.extend({
 	initialize: function(){
-		this.msglst = msglst;
-		this.blogview = new BlogView();
+		this.collection = new msglist();
+		this.blogview = new BlogView({
+			collection: this.collection
+		});
 		this.route("view/:id", "showMsg");
 	},
 	showMsg: function(id){
@@ -135,7 +137,7 @@
 	}
  });
 
- var msglst = new msgList();
+ //var msglst = new msgList();
  var router = new BlogRouter();
  Backbone.history.start();
 

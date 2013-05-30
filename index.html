@@ -16,15 +16,19 @@
 	<div id="viewmsg" style="float:right;"></div>
 	<script type="text/template" id="msglist-template">
 		<% _.each(messages, function(msg) { %>
-			<li><a href="#view/<%= msg.id %>">By <%= msg.author %> (<%= msg.created %>)</a></li>
-			<% }); %>
+			<li><a href="#view/<%= msg.id %>">By <%= msg.author %> (<%= msg.created %>) <i class="icon-eye-open"></i></a>
+				<% if (msg.modified) { %>
+					<i class="icon-pencil"></i>
+					<% } %>
+				</li>
+				<% }); %>
 	</script>
 
 	<div id="msglist"></div>
 	<script type="text/template" id="msg-template">
-		By <%= author %> (<%= created %>) :
+		By <%= author %> (<%= created %>)
 		<a class="btn btn-small btn-info moderate" href="#"><i class="icon-pencil"></i> Moderate</a>
-		<a class="btn btn-small btn-danger delete" ><i class="icon-trash"></i> Delete</a>
+		<a class="btn btn-small btn-danger delete" href="/BBone/caencamp"><i class="icon-trash"></i> Delete</a>
 		<a class="btn btn-small validate" href="#" style="display:none;"><i class="icon-check" style="color:green;"></i> Valider</a>
 		<a class="btn btn-small cancel" href="#" style="display:none;"><i class="icon-check" style="color:red;"></i> Annuler</a><br />
 		<span id="editable"><%= msg %></span>

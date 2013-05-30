@@ -17,13 +17,14 @@ jQuery ->
 		model: Message
 
 	class MsgView extends Backbone.View
-		tagName: 'li'
+		el: $('#viewmsg'),
 
 		initialize: ->
 			_.bindAll @
-			@model.bind('change', @render);
-			@model.bind('remove', @unrender);
-			@oldMsg = ''
+			@template = _.template $('#msg-template').html();
+			@oldMsg = "";
+			@model = @collection.at(@id);
+			@render();
 
 		events:
 			'click a.moderate': 'moderate'
@@ -32,12 +33,8 @@ jQuery ->
 			'click a.cancel': 'cancel'
 
 		render: ->
-			$(@el).html 	'On ' + @model.get('created') + ', by ' + @model.get('author') + ' <a class="btn btn-small btn-info moderate" href="#"><i class="icon-pencil"></i> Moderate</a>'+
-			'<a class="btn btn-small btn-danger delete" ><i class="icon-trash"></i> Delete</a> '
-			$(@el).append('<a class="btn btn-small validate" href="#" style="display:none;"><i class="icon-check" style="color:green;"></i> Valider</a><a class="btn btn-small cancel" href="#" style="display:none;"><i class="icon-check" style="color:red;"></i> Annuler</a><br />')
-			$(@el).append('<span id="editable">'+ @model.get('msg')+ "</span>")
-			if @model.get("modified")
-				$(@el).append("<br />moderated on "+@model.get('modified'))
+			renderedContent = @template(@model.toJSON());
+			$('#viewmsg').html(renderedContent);
 			@
 
 		unrender: ->
@@ -69,18 +66,30 @@ jQuery ->
 		remove: ->
 			@model.destroy()
 
+	class MsgListView extends Backbone.View
+		el: $('#msglist')
+
+		initialize: ->
+			@template = _.template $('#msglist-template').html();
+			_.bindAll(@, 'render')
+			@collection = msglst
+			@collection.bind 'change', @render
+			@collection.bind 'add', @render
+			@collection.bind 'remove', @render
+
+		render: ->
+			self = @
+			renderedContent = @template({ messages : @collection.toJSON() })
+			$(@el).html(renderedContent)
+			@
+
 	class BlogView extends Backbone.View
-		el: $('#blog')
+		el: $('#form')
 		events:
 			"click button#submit": "addMsg"
 		initialize: ->
-			@collection = new MsgList()
+			@collection = msglst
 			@collection.bind 'add', @appendMsg
-			@render()
-
-		render: ->
-			$(@el).append("<label for='nick'>Nickname : </label><input type='text' id='nick' /> <br /><label for='msg'>Message : </label><textarea rows='3' id='msg'></textarea><br /><button id='submit'>Envoyer</button><br />")
-			$(@el).append("<ul></ul>")
 
 		addMsg: ->
 			msg = new Message msg: $('#msg').val(), author: $('#nick').val(), id: @collection.length
@@ -90,8 +99,10 @@ jQuery ->
 
 		appendMsg: (msg) ->
 			msgView = new MsgView model: msg
-			$('ul', @el).append(msgView.render().el);
+			$('ul', @el).append(msgListView.render().el)
 
-	Backbone.sync = (method, model, success, error) ->
-		success()
+
 	blogview = new BlogView
+	router = new BlogRouter
+	msglst = new MsgList
+	Backbone.history.start();
